@@ -1,0 +1,39 @@
+version: "2.2"
+services:
+  web-server:
+    build: .
+    restart: always
+    volumes:
+      - "./:/var/www/html/"
+#    env_file:
+#      - .env
+    ports:
+      - "127.0.0.19:80:80"
+    networks:
+      - backend
+  mysql-server:
+    image: mysql:8.0.19
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+    networks:
+      - backend
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:5.0.1
+    restart: always
+    environment:
+      PMA_HOST: mysql-server
+      PMA_USER: root
+      PMA_PASSWORD: secret
+    ports:
+      - "127.0.0.23:80:80"
+    networks:
+      - backend
+networks:
+  backend:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.220.0/24
